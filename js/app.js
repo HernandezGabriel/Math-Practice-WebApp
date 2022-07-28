@@ -1,13 +1,28 @@
 document.addEventListener('DOMContentLoaded', () => {
+    scoreCount();
     problemCount();
     showProblem();
+    let section = document.getElementById("answers");
+    let ul = section.querySelector("ul");
+    let list = ul.querySelectorAll("li");
+    list.forEach((x)=>{
+        x.addEventListener('click',() => {
+            showProblem();
+        });
+    });
+    let startOver = document.getElementById("btnStartOver")
+    startOver.addEventListener('click',()=>{
+        document.location.reload();
+    })
 });
+
+let globalCorrectAnswer;
 
 function randomNumber(max){
     return Math.floor(Math.random() * Math.floor(max));
 }
 
-function randomAnswers(correctAnswer){
+function randomAnswers(){
     let section = document.getElementById("answers");
     let ul = section.querySelector("ul");
     let list = ul.querySelectorAll("li");
@@ -15,12 +30,7 @@ function randomAnswers(correctAnswer){
     list.forEach((x)=>{
        x.innerText = Math.floor(Math.random() * Math.floor(82)).toString();
     }); 
-    list[correctSpot].innerText = correctAnswer;
-    list.forEach((x) =>{
-        x.addEventListener('click',() => {
-            checkAnswer(x,correctAnswer);
-           });
-    });
+    list[correctSpot].innerText = globalCorrectAnswer;
 }
 
 function showProblem(){
@@ -28,15 +38,9 @@ function showProblem(){
     let right = randomNumber(10);
     let expression = document.querySelector(".expression");
     expression.innerText = left.toString() + "*" + right.toString();
-    randomAnswers(left * right);
+    globalCorrectAnswer = (left * right);
+    randomAnswers();
     
-}
-
-function checkAnswer(selection, correctAnswer){
-    if(parseInt(selection.innerText) == correctAnswer){
-        addCount();
-    }
-    showProblem();
 }
 
 function problemCount(){
@@ -48,20 +52,34 @@ function problemCount(){
     list.forEach((x)=>{
         x.addEventListener('click',() => {
             problemNumber++;
-    currProblem.innerText = problemNumber;
-    if(problemNumber == 10){
-        showSummary();
-    }
+        if(problemNumber == 11){
+            showSummary();
+        }else{
+            currProblem.innerText = problemNumber;
+        }
+        });
+    });
+}
+
+function scoreCount(){
+    let section = document.getElementById("answers");
+    let ul = section.querySelector("ul");
+    let list = ul.querySelectorAll("li");
+    let currScore = document.querySelector(".currentScore");
+    let problemScore = parseInt(currScore.innerText);
+    list.forEach((x)=>{
+        x.addEventListener('click',() => {
+            if(parseInt(x.innerText)==globalCorrectAnswer){
+                problemScore++;
+                currScore.innerText = problemScore;
+            }
            });
     });
 }
 
-function addCount(){
-    let currScore = document.querySelector(".currentScore");
-    let problemScore = parseInt(currScore.innerText);
-    problemScore++;
-    currScore.innerText = problemScore;
-}
-
 function showSummary(){
+    let finale = document.querySelectorAll(".show-hide")
+    finale.forEach((x)=> {
+        x.style.visibility = "hidden";
+    });
 }
